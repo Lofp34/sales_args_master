@@ -4,6 +4,7 @@ import "./globals.css";
 import InteractiveBackground from "@/components/ui/InteractiveBackground";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,18 @@ export default function RootLayout({
           <main className="relative z-10">
             {children}
           </main>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: 'rgba(30, 41, 59, 0.7)',
+                color: '#fff',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+              },
+            }}
+          />
         </Providers>
       </body>
     </html>

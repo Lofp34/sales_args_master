@@ -26,6 +26,7 @@ const VotingSystem = ({
                     key={star}
                     type="button"
                     disabled={disabled}
+                    aria-label={`Voter ${star} étoiles sur 5`}
                     className={cn(
                         "transition-all duration-200 transform",
                         !disabled && "hover:scale-125 focus:outline-none",

@@ -7,7 +7,17 @@ export async function GET() {
     try {
         const session = await getServerSession(authOptions);
 
+        const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
+
         const argumentsData = await prisma.argument.findMany({
+            where: isAdmin
+                ? {}
+                : {
+                    OR: [
+                        { status: "APPROVED" },
+                        { userId: session?.user?.id || "unauthenticated" }
+                    ]
+                },
             include: {
                 votes: true,
                 user: {
@@ -37,6 +47,7 @@ export async function GET() {
                 title: arg.title,
                 impact: arg.impact,
                 maieutique: arg.maieutique,
+                status: arg.status,
                 averageRating,
                 userVote,
                 userId: arg.userId,
@@ -69,12 +80,15 @@ export async function POST(req: Request) {
             );
         }
 
+        const isAdmin = session.user.role === "ADMIN" || session.user.role === "SUPER_ADMIN";
+
         const newArgument = await prisma.argument.create({
             data: {
                 title,
                 impact,
                 maieutique,
                 userId: session.user.id,
+                status: isAdmin ? "APPROVED" : "PENDING",
             },
         });
 

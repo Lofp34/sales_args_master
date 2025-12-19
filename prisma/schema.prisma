@@ -19,12 +19,19 @@ enum Role {
   SUPER_ADMIN
 }
 
+enum ArgumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id        String     @id @default(cuid())
   email     String     @unique
   password  String
   name      String?
   role      Role       @default(USER)
+  active    Boolean    @default(true)
   arguments Argument[]
   votes     Vote[]
   createdAt DateTime   @default(now())
@@ -32,15 +39,16 @@ model User {
 }
 
 model Argument {
-  id         String   @id @default(cuid())
+  id         String         @id @default(cuid())
   title      String
   impact     String
   maieutique String
+  status     ArgumentStatus @default(PENDING)
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
+  user       User           @relation(fields: [userId], references: [id])
   votes      Vote[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
 }
 
 model Vote {
