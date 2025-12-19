@@ -25,7 +25,7 @@ const DashboardPage = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("APPROVED");
-    const [sortBy, setBy] = useState<"date" | "rating">("date");
+    const [sortBy, setBy] = useState<"date" | "rating">("rating");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingArgument, setEditingArgument] = useState<Argument | null>(null);
 
