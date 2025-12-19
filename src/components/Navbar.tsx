@@ -1,15 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { LogOut, User as UserIcon, Shield, LayoutGrid, Users } from "lucide-react";
 
 const Navbar = () => {
     const { data: session } = useSession();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <nav className="sticky top-0 z-50 px-6 py-4 flex justify-center" aria-label="Navigation principale">
+        <nav className="sticky top-0 z-50 px-6 py-4 flex justify-center relative" aria-label="Navigation principale">
             <div className="glass-morphism px-6 py-3 flex items-center justify-between w-full max-w-7xl">
                 <Link href="/" className="flex items-center gap-2" aria-label="Retour à l'accueil">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center">
@@ -69,6 +70,17 @@ const Navbar = () => {
                                     <LogOut size={18} />
                                 </button>
                             </div>
+
+                            <button
+                                type="button"
+                                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                                className="md:hidden p-2 rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+                                aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+                                aria-expanded={isMobileMenuOpen}
+                                aria-controls="mobile-nav-menu"
+                            >
+                                {isMobileMenuOpen ? "✕" : "☰"}
+                            </button>
                         </>
                     ) : (
                         <Link
@@ -81,6 +93,52 @@ const Navbar = () => {
                     )}
                 </div>
             </div>
+
+            {session && (
+                <div
+                    id="mobile-nav-menu"
+                    className={`md:hidden absolute top-full left-0 right-0 px-6 pt-3 ${isMobileMenuOpen ? "block" : "hidden"}`}
+                >
+                    <div className="glass-morphism p-4 flex flex-col gap-3">
+                        <Link
+                            href="/dashboard"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-2"
+                        >
+                            <LayoutGrid size={16} />
+                            Arguments
+                        </Link>
+                        {session.user.role === "SUPER_ADMIN" && (
+                            <Link
+                                href="/team"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-2"
+                            >
+                                <Users size={16} />
+                                Équipe
+                            </Link>
+                        )}
+                        <Link
+                            href="/dashboard"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-2"
+                        >
+                            <UserIcon size={16} />
+                            Profil
+                        </Link>
+                        <button
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                signOut();
+                            }}
+                            className="text-sm font-medium text-red-300 hover:text-red-200 transition-colors flex items-center gap-2"
+                        >
+                            <LogOut size={16} />
+                            Déconnexion
+                        </button>
+                    </div>
+                </div>
+            )}
         </nav>
     );
 };
