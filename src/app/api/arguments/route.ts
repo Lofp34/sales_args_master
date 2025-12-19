@@ -21,15 +21,15 @@ export async function GET() {
             },
         });
 
-        const formattedArguments = argumentsData.map((arg) => {
+        const formattedArguments = argumentsData.map((arg: any) => {
             const totalVotes = arg.votes.length;
             const averageRating =
                 totalVotes > 0
-                    ? arg.votes.reduce((acc, vote) => acc + vote.value, 0) / totalVotes
+                    ? arg.votes.reduce((acc: number, vote: any) => acc + vote.value, 0) / totalVotes
                     : 0;
 
             const userVote = session?.user
-                ? arg.votes.find((v) => v.userId === session.user.id)?.value
+                ? arg.votes.find((v: any) => v.userId === session.user.id)?.value
                 : undefined;
 
             return {
