@@ -36,9 +36,15 @@ const DashboardPage = () => {
         try {
             const res = await fetch("/api/arguments");
             const data = await res.json();
-            setArgumentsList(data);
+            if (Array.isArray(data)) {
+                setArgumentsList(data);
+            } else {
+                console.error("API did not return an array:", data);
+                setArgumentsList([]);
+            }
         } catch (err) {
             console.error("Failed to fetch arguments", err);
+            setArgumentsList([]);
         } finally {
             setLoading(false);
         }
