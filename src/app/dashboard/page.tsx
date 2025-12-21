@@ -19,6 +19,13 @@ interface Argument {
     userName?: string;
 }
 
+type ChatRole = "user" | "assistant";
+
+interface ChatMessage {
+    role: ChatRole;
+    content: string;
+}
+
 const DashboardPage = () => {
     const { data: session } = useSession();
     const [argumentsList, setArgumentsList] = useState<Argument[]>([]);
@@ -28,6 +35,10 @@ const DashboardPage = () => {
     const [sortBy, setBy] = useState<"date" | "rating">("rating");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingArgument, setEditingArgument] = useState<Argument | null>(null);
+    const [activeModalTab, setActiveModalTab] = useState<"chat" | "form">("chat");
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [chatInput, setChatInput] = useState("");
+    const [chatLoading, setChatLoading] = useState(false);
 
     const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
 
@@ -37,6 +48,50 @@ const DashboardPage = () => {
         impact: "",
         maieutique: "",
     });
+
+    const resetModalState = () => {
+        setActiveModalTab("chat");
+        setChatMessages([
+            {
+                role: "assistant",
+                content:
+                    "Bonjour ! Décris ton contexte commercial (cible, besoin, objection). Je vais structurer un argument avec un titre, un impact psychologique et une question maïeutique.",
+            },
+        ]);
+        setChatInput("");
+    };
+
+    const extractJsonPayload = (content: string) => {
+        const fencedMatch = content.match(/```json\s*([\s\S]*?)\s*```/i);
+        if (fencedMatch?.[1]) {
+            return fencedMatch[1];
+        }
+        const firstBrace = content.indexOf("{");
+        const lastBrace = content.lastIndexOf("}");
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+            return content.slice(firstBrace, lastBrace + 1);
+        }
+        return null;
+    };
+
+    const applyAssistantDraft = (content: string) => {
+        const payload = extractJsonPayload(content);
+        if (!payload) return false;
+        try {
+            const parsed = JSON.parse(payload);
+            if (parsed?.title && parsed?.impact && parsed?.maieutique) {
+                setFormData({
+                    title: String(parsed.title),
+                    impact: String(parsed.impact),
+                    maieutique: String(parsed.maieutique),
+                });
+                return true;
+            }
+        } catch (error) {
+            return false;
+        }
+        return false;
+    };
 
     const fetchArguments = async () => {
         try {
@@ -127,7 +182,43 @@ const DashboardPage = () => {
                 impact: arg.impact,
                 maieutique: arg.maieutique,
             });
+            setActiveModalTab("form");
             setIsModalOpen(true);
+        }
+    };
+
+    const handleChatSubmit = async () => {
+        if (!chatInput.trim() || chatLoading) return;
+        const nextMessages: ChatMessage[] = [
+            ...chatMessages,
+            { role: "user", content: chatInput.trim() },
+        ];
+        setChatMessages(nextMessages);
+        setChatInput("");
+        setChatLoading(true);
+
+        try {
+            const res = await fetch("/api/arguments/assist", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messages: nextMessages,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Assistant error");
+
+            const assistantMessage = data.message || "Je n'ai pas de réponse pour l'instant.";
+            setChatMessages((prev) => [...prev, { role: "assistant", content: assistantMessage }]);
+
+            if (applyAssistantDraft(assistantMessage)) {
+                setActiveModalTab("form");
+                toast.success("Proposition générée. Tu peux ajuster puis enregistrer.");
+            }
+        } catch (err: any) {
+            toast.error(err.message || "Erreur lors de l'appel à l'assistant");
+        } finally {
+            setChatLoading(false);
         }
     };
 
@@ -184,6 +275,7 @@ const DashboardPage = () => {
                         onClick={() => {
                             setEditingArgument(null);
                             setFormData({ title: "", impact: "", maieutique: "" });
+                            resetModalState();
                             setIsModalOpen(true);
                         }}
                         className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
@@ -295,7 +387,7 @@ const DashboardPage = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-                    <GlassCard className="w-full max-w-2xl relative z-10 p-8">
+                    <GlassCard className="w-full max-w-3xl relative z-10 p-8">
                         <div className="flex justify-between items-center mb-8">
                             <h2 className="text-2xl font-bold text-white">
                                 {editingArgument ? "Modifier l'argument" : "Proposer un argument"}
@@ -305,7 +397,73 @@ const DashboardPage = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="flex gap-2 mb-6">
+                            <button
+                                type="button"
+                                onClick={() => setActiveModalTab("chat")}
+                                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${activeModalTab === "chat"
+                                    ? "bg-indigo-500 text-white"
+                                    : "bg-white/5 text-white/50 hover:text-white"
+                                    }`}
+                            >
+                                Assistant GPT
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setActiveModalTab("form")}
+                                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${activeModalTab === "form"
+                                    ? "bg-indigo-500 text-white"
+                                    : "bg-white/5 text-white/50 hover:text-white"
+                                    }`}
+                            >
+                                Formulaire
+                            </button>
+                        </div>
+
+                        {activeModalTab === "chat" && (
+                            <div className="space-y-4">
+                                <div className="h-72 overflow-y-auto rounded-2xl border border-white/10 bg-black/30 p-4 space-y-4">
+                                    {chatMessages.map((message, index) => (
+                                        <div
+                                            key={`${message.role}-${index}`}
+                                            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                                        >
+                                            <div
+                                                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${message.role === "user"
+                                                    ? "bg-indigo-500/80 text-white"
+                                                    : "bg-white/10 text-white/80"
+                                                    }`}
+                                            >
+                                                {message.content}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="text"
+                                        value={chatInput}
+                                        onChange={(e) => setChatInput(e.target.value)}
+                                        placeholder="Décris ton contexte commercial..."
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleChatSubmit}
+                                        disabled={chatLoading}
+                                        className="px-5 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-all disabled:opacity-60"
+                                    >
+                                        {chatLoading ? "En cours..." : "Envoyer"}
+                                    </button>
+                                </div>
+                                <p className="text-xs text-white/40">
+                                    L'assistant prépare un brouillon. Tu pourras modifier le résultat dans l'onglet Formulaire.
+                                </p>
+                            </div>
+                        )}
+
+                        {activeModalTab === "form" && (
+                            <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-white/50 uppercase tracking-widest ml-1">Titre (Argument)</label>
                                 <input
@@ -358,7 +516,8 @@ const DashboardPage = () => {
                             <p className="text-[10px] text-center text-white/30 italic">
                                 * Les nouveaux arguments sont soumis à validation par un administrateur avant d'être visibles par tous.
                             </p>
-                        </form>
+                            </form>
+                        )}
                     </GlassCard>
                 </div>
             )}
