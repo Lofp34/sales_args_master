@@ -34,7 +34,7 @@ export default function RootLayout({
         <Providers>
           <InteractiveBackground />
           <Navbar />
-          <main className="relative z-10">
+          <main className="relative z-10 pb-24 md:pb-0">
             {children}
           </main>
           <Toaster
