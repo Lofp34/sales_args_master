@@ -20,7 +20,7 @@ const VotingSystem = ({
     const [hover, setHover] = useState(0);
 
     return (
-        <div className="flex items-center gap-1">
+        <div className={cn("flex items-center gap-1", disabled && "opacity-60")}>
             {[1, 2, 3, 4, 5].map((star) => (
                 <button
                     key={star}
@@ -28,8 +28,8 @@ const VotingSystem = ({
                     disabled={disabled}
                     aria-label={`Voter ${star} étoiles sur 5`}
                     className={cn(
-                        "transition-all duration-200 transform",
-                        !disabled && "hover:scale-125 focus:outline-none",
+                        "transition-all duration-200 transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/60 focus-visible:ring-offset-0 rounded-sm",
+                        !disabled && "hover:scale-125",
                         disabled ? "cursor-default" : "cursor-pointer"
                     )}
                     onClick={() => onVote(star)}
