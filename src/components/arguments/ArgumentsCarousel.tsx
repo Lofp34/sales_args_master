@@ -30,7 +30,7 @@ const ArgumentsCarousel = ({
 }: ArgumentsCarouselProps) => {
     const prevButtonRef = useRef<HTMLButtonElement>(null);
     const nextButtonRef = useRef<HTMLButtonElement>(null);
-    const swiperRef = useRef<SwiperInstance>();
+    const swiperRef = useRef<SwiperInstance | null>(null);
 
     useEffect(() => {
         if (!swiperRef.current || !prevButtonRef.current || !nextButtonRef.current) return;
