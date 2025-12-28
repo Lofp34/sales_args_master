@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import ArgumentCard from "@/components/Dashboard/ArgumentCard";
-import { Plus, Loader2, Search, X, Filter, SortAsc, Star, Clock, Check } from "lucide-react";
+import { Plus, Loader2, Search, X, Filter, SortAsc, Star, Clock, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import toast from "react-hot-toast";
 
@@ -17,6 +17,7 @@ interface Argument {
     userVote?: number;
     userId: string;
     userName?: string;
+    createdAt?: string;
 }
 
 const DashboardPage = () => {
@@ -25,9 +26,10 @@ const DashboardPage = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("APPROVED");
-    const [sortBy, setBy] = useState<"date" | "rating">("rating");
+    const [activeTab, setActiveTab] = useState<"TOP_RATED" | "RECENT">("TOP_RATED");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingArgument, setEditingArgument] = useState<Argument | null>(null);
+    const carouselRef = useRef<HTMLDivElement>(null);
 
     const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
 
@@ -87,7 +89,8 @@ const DashboardPage = () => {
 
             toast.success(status === "APPROVED" ? "Argument approuvé !" : "Argument refusé.");
             fetchArguments();
-        } catch (err) {
+        } catch (error) {
+            console.error("Failed to update status", error);
             toast.error("Erreur lors de la modération");
         }
     };
@@ -113,8 +116,9 @@ const DashboardPage = () => {
             setEditingArgument(null);
             setFormData({ title: "", impact: "", maieutique: "" });
             fetchArguments();
-        } catch (err: any) {
-            toast.error(err.message);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Erreur lors de l'enregistrement";
+            toast.error(message);
         }
     };
 
@@ -138,7 +142,8 @@ const DashboardPage = () => {
             if (!res.ok) throw new Error("Delete failed");
             toast.success("Argument supprimé");
             fetchArguments();
-        } catch (err) {
+        } catch (error) {
+            console.error("Failed to delete argument", error);
             toast.error("Erreur lors de la suppression");
         }
     };
@@ -157,116 +162,123 @@ const DashboardPage = () => {
             return matchesSearch && matchesStatus;
         })
         .sort((a, b) => {
-            if (sortBy === "rating") return b.averageRating - a.averageRating;
-            return b.id.localeCompare(a.id); // Approximation of date if id is cuid
+            if (activeTab === "TOP_RATED") return b.averageRating - a.averageRating;
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return dateB - dateA;
         });
+
+    const scrollCarousel = (direction: "prev" | "next") => {
+        const container = carouselRef.current;
+        if (!container) return;
+        const scrollAmount = container.clientWidth * 0.8;
+        container.scrollBy({
+            left: direction === "next" ? scrollAmount : -scrollAmount,
+            behavior: "smooth",
+        });
+    };
 
     return (
         <div className="max-w-7xl mx-auto px-6 py-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                <div>
-                    <h1 className="text-4xl font-bold text-white mb-2">Arguments de Vente</h1>
-                    <p className="text-white/60">Maîtrisez l'art de la maïeutique et l'impact psychologique.</p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-4">
-                    <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-indigo-400 transition-colors" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Rechercher..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 w-full md:w-64 transition-all"
-                        />
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 mb-10">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-indigo-500/5 to-transparent pointer-events-none" />
+                <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div className="space-y-3 max-w-2xl">
+                        <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold">Playbook Ulysse</p>
+                        <h1 className="text-4xl font-black text-white leading-tight">Arguments de Vente</h1>
+                        <p className="text-white/70 text-lg">
+                            Une galerie inspirée pour trouver l&apos;angle parfait : classez par meilleures notes ou dernières idées validées.
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                            <span className="px-3 py-1 rounded-full bg-white/10 border border-white/15 text-white/70 text-xs font-semibold flex items-center gap-2">
+                                <Star size={14} className="text-amber-300" />
+                                Top rated
+                            </span>
+                            <span className="px-3 py-1 rounded-full bg-white/10 border border-white/15 text-white/70 text-xs font-semibold flex items-center gap-2">
+                                <Clock size={14} className="text-cyan-300" />
+                                Plus récentes
+                            </span>
+                        </div>
                     </div>
-                    <button
-                        onClick={() => {
-                            setEditingArgument(null);
-                            setFormData({ title: "", impact: "", maieutique: "" });
-                            setIsModalOpen(true);
-                        }}
-                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
-                    >
-                        <Plus size={20} />
-                        Proposer
-                    </button>
+                    <div className="flex flex-col sm:flex-row items-stretch gap-4 w-full lg:w-auto">
+                        <div className="relative group flex-1">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-indigo-400 transition-colors" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Rechercher un argument..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 w-full transition-all"
+                            />
+                        </div>
+                        <button
+                            onClick={() => {
+                                setEditingArgument(null);
+                                setFormData({ title: "", impact: "", maieutique: "" });
+                                setIsModalOpen(true);
+                            }}
+                            className="flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
+                        >
+                            <Plus size={20} />
+                            Proposer
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {isAdmin && (
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-8 bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
-                    <div className="flex gap-2 p-1 bg-black/20 rounded-xl">
+            <div className="flex flex-col gap-4 mb-6">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                    <div className="flex gap-6 border-b border-white/10">
                         {[
-                            { id: "APPROVED", label: "Validés", icon: Check },
-                            { id: "PENDING", label: "En attente", icon: Clock },
-                            { id: "ALL", label: "Tout voir", icon: Filter },
+                            { id: "TOP_RATED", label: "Top Rated", description: "Les mieux notés" },
+                            { id: "RECENT", label: "Plus récentes", description: "Les dernières" },
                         ].map((tab) => (
                             <button
                                 key={tab.id}
-                                onClick={() => setStatusFilter(tab.id)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${statusFilter === tab.id
-                                    ? "bg-white/10 text-white shadow-sm"
-                                    : "text-white/40 hover:text-white/60"
-                                    }`}
+                                onClick={() => setActiveTab(tab.id as "TOP_RATED" | "RECENT")}
+                                className={`relative pb-3 text-left transition-colors ${activeTab === tab.id ? "text-white" : "text-white/50 hover:text-white/70"}`}
                             >
-                                <tab.icon size={14} />
-                                {tab.label}
+                                <p className="text-base font-semibold">{tab.label}</p>
+                                <p className="text-xs text-white/40">{tab.description}</p>
+                                {activeTab === tab.id && (
+                                    <span className="absolute -bottom-[1px] left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-400 to-cyan-400 rounded-full" />
+                                )}
                             </button>
                         ))}
                     </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 text-white/40 text-sm">
-                            <SortAsc size={14} />
-                            Trier par :
+                    {isAdmin && (
+                        <div className="flex flex-wrap items-center gap-2 bg-white/5 p-1.5 rounded-xl border border-white/10">
+                            {[
+                                { id: "APPROVED", label: "Validés", icon: Check },
+                                { id: "PENDING", label: "En attente", icon: Clock },
+                                { id: "ALL", label: "Tout voir", icon: Filter },
+                            ].map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setStatusFilter(tab.id)}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${statusFilter === tab.id
+                                        ? "bg-white/10 text-white shadow-sm"
+                                        : "text-white/50 hover:text-white/70"
+                                        }`}
+                                >
+                                    <tab.icon size={14} />
+                                    {tab.label}
+                                </button>
+                            ))}
                         </div>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => setBy("date")}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "date" ? "bg-indigo-500 text-white" : "bg-white/5 text-white/40 hover:bg-white/10"
-                                    }`}
-                            >
-                                Date
-                            </button>
-                            <button
-                                onClick={() => setBy("rating")}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${sortBy === "rating" ? "bg-indigo-500 text-white" : "bg-white/5 text-white/40 hover:bg-white/10"
-                                    }`}
-                            >
-                                <Star size={12} /> Popularité
-                            </button>
-                        </div>
+                    )}
+                </div>
+                <div className="flex items-center justify-between text-white/50 text-sm">
+                    <div className="flex items-center gap-2">
+                        <SortAsc size={14} />
+                        {activeTab === "TOP_RATED" ? "Classé par note moyenne décroissante" : "Classé par date de création"}
+                    </div>
+                    <div className="flex items-center gap-2 text-white/60">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                        {sortedAndFilteredArguments.length} argument{sortedAndFilteredArguments.length > 1 ? "s" : ""} affiché{sortedAndFilteredArguments.length > 1 ? "s" : ""}
                     </div>
                 </div>
-            )}
-
-            {!isAdmin && (
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 text-white/40 text-sm">
-                            <SortAsc size={14} />
-                            Trier par :
-                        </div>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => setBy("date")}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "date" ? "bg-indigo-500 text-white" : "bg-white/5 text-white/40 hover:bg-white/10"
-                                    }`}
-                            >
-                                Date
-                            </button>
-                            <button
-                                onClick={() => setBy("rating")}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${sortBy === "rating" ? "bg-indigo-500 text-white" : "bg-white/5 text-white/40 hover:bg-white/10"
-                                    }`}
-                            >
-                                <Star size={12} /> Popularité
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            </div>
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
@@ -277,17 +289,52 @@ const DashboardPage = () => {
                     <p className="text-white/40 italic">Aucun argument trouvé.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {sortedAndFilteredArguments.map((arg) => (
-                        <ArgumentCard
-                            key={arg.id}
-                            argument={arg}
-                            onVote={handleVote}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                            onStatusChange={handleStatusChange}
-                        />
-                    ))}
+                <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center justify-start pointer-events-none">
+                        <div className="w-16 h-full bg-gradient-to-r from-[#020617] to-transparent" />
+                    </div>
+                    <div className="absolute inset-y-0 right-0 flex items-center justify-end pointer-events-none">
+                        <div className="w-16 h-full bg-gradient-to-l from-[#020617] to-transparent" />
+                    </div>
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                        <p className="text-white/70 text-sm">Glissez pour parcourir les arguments</p>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => scrollCarousel("prev")}
+                                className="p-2 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+                                aria-label="Voir les cartes précédentes"
+                            >
+                                <span className="sr-only">Précédent</span>
+                                <ChevronLeft size={16} />
+                            </button>
+                            <button
+                                onClick={() => scrollCarousel("next")}
+                                className="p-2 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+                                aria-label="Voir les cartes suivantes"
+                            >
+                                <span className="sr-only">Suivant</span>
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        ref={carouselRef}
+                        className="flex gap-6 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory"
+                        role="list"
+                        aria-label="Liste des arguments en carrousel"
+                    >
+                        {sortedAndFilteredArguments.map((arg) => (
+                            <div key={arg.id} className="snap-start min-w-[320px] max-w-[420px] flex-1">
+                                <ArgumentCard
+                                    argument={arg}
+                                    onVote={handleVote}
+                                    onEdit={handleEdit}
+                                    onDelete={handleDelete}
+                                    onStatusChange={handleStatusChange}
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
 
@@ -356,7 +403,7 @@ const DashboardPage = () => {
                                 </button>
                             </div>
                             <p className="text-[10px] text-center text-white/30 italic">
-                                * Les nouveaux arguments sont soumis à validation par un administrateur avant d'être visibles par tous.
+                                * Les nouveaux arguments sont soumis à validation par un administrateur avant d&apos;être visibles par tous.
                             </p>
                         </form>
                     </GlassCard>
