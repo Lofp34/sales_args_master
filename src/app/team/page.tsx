@@ -91,9 +91,9 @@ const TeamPage = () => {
 
     const RoleBadge = ({ role }: { role: string }) => {
         const styles = {
-            SUPER_ADMIN: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
-            ADMIN: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-            USER: "bg-slate-500/20 text-slate-400 border-slate-500/30",
+            SUPER_ADMIN: "bg-[var(--accent-soft)] text-[var(--accent)] border-[var(--accent)]/30",
+            ADMIN: "bg-amber-500/15 text-amber-600 border-amber-500/30",
+            USER: "bg-[var(--paper-2)] text-[var(--ink-muted)] border-[var(--line)]",
         };
         return (
             <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border font-bold ${styles[role as keyof typeof styles]}`}>
@@ -103,27 +103,27 @@ const TeamPage = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div>
-                    <h1 className="text-4xl font-bold text-white mb-2">Gestion de l'équipe</h1>
-                    <p className="text-white/60">Gérez les membres, les rôles et les permissions de votre équipe.</p>
+                    <h1 className="text-4xl sm:text-5xl font-semibold text-[var(--ink)] mb-2 font-display">Gestion de l'équipe</h1>
+                    <p className="text-[var(--ink-muted)]">Gérez les membres, les rôles et les permissions de votre équipe.</p>
                 </div>
 
                 <div className="flex flex-wrap gap-4">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-muted)]" />
                         <input
                             type="text"
                             placeholder="Rechercher..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 min-w-[240px]"
+                            className="bg-[var(--paper-2)] border border-[var(--line)] rounded-xl py-2 pl-10 pr-4 text-sm text-[var(--ink)] placeholder:text-[var(--ink-muted)] placeholder:opacity-60 focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] min-w-[240px]"
                         />
                     </div>
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-8 py-3 rounded-2xl font-bold transition-all shadow-xl shadow-indigo-500/20 active:scale-95 border border-white/10"
+                        className="flex items-center gap-2 bg-[var(--accent)] hover:bg-[#cf4f1e] text-white px-8 py-3 rounded-2xl font-bold transition-all shadow-xl active:scale-95 border border-[var(--line)]"
                     >
                         <UserPlus size={20} />
                         Ajouter un membre
@@ -133,7 +133,7 @@ const TeamPage = () => {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin text-indigo-500" size={48} />
+                    <Loader2 className="animate-spin text-[var(--accent)]" size={48} />
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -146,12 +146,12 @@ const TeamPage = () => {
                             )}
 
                             <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-full flex items-center justify-center border ${user.active ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-slate-800 border-white/10 text-slate-500'}`}>
+                                <div className={`w-12 h-12 rounded-full flex items-center justify-center border ${user.active ? 'bg-[var(--accent-soft)] border-[var(--line)] text-[var(--accent)]' : 'bg-[var(--paper-2)] border-[var(--line)] text-[var(--ink-muted)]'}`}>
                                     <User size={24} />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-lg font-bold text-white truncate">{user.name || "Sans nom"}</h3>
-                                    <p className="text-sm text-white/40 truncate flex items-center gap-1">
+                                    <h3 className="text-lg font-semibold text-[var(--ink)] truncate">{user.name || "Sans nom"}</h3>
+                                    <p className="text-sm text-[var(--ink-muted)] truncate flex items-center gap-1">
                                         <Mail size={12} />
                                         {user.email}
                                     </p>
@@ -160,17 +160,17 @@ const TeamPage = () => {
 
                             <div className="flex flex-wrap gap-2 items-center">
                                 <RoleBadge role={user.role} />
-                                <span className="text-[10px] text-white/30">Créé le {new Date(user.createdAt).toLocaleDateString()}</span>
+                                <span className="text-[10px] text-[var(--ink-muted)]">Créé le {new Date(user.createdAt).toLocaleDateString()}</span>
                             </div>
 
-                            <div className="flex items-center justify-between pt-4 mt-auto border-t border-white/5">
+                            <div className="flex items-center justify-between pt-4 mt-auto border-t border-[var(--line)]">
                                 <div className="flex gap-2">
                                     {user.id !== session.user.id ? (
                                         <>
                                             <button
                                                 onClick={() => handleUpdateUser(user.id, { active: !user.active })}
                                                 title={user.active ? "Désactiver le compte" : "Réactiver le compte"}
-                                                className={`p-2 rounded-lg transition-colors ${user.active ? 'hover:bg-red-500/10 text-slate-400 hover:text-red-400' : 'hover:bg-green-500/10 text-slate-400 hover:text-green-400'}`}
+                                                className={`p-2 rounded-lg transition-colors ${user.active ? 'hover:bg-red-500/10 text-[var(--ink-muted)] hover:text-red-500' : 'hover:bg-green-500/10 text-[var(--ink-muted)] hover:text-green-600'}`}
                                             >
                                                 {user.active ? <Power size={18} /> : <PowerOff size={18} />}
                                             </button>
@@ -178,13 +178,13 @@ const TeamPage = () => {
                                             <button
                                                 onClick={() => setConfirmDelete({ id: user.id, name: user.name || user.email })}
                                                 title="Supprimer définitivement"
-                                                className="p-2 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-500 transition-colors"
+                                                className="p-2 rounded-lg hover:bg-red-500/10 text-[var(--ink-muted)] hover:text-red-500 transition-colors"
                                             >
                                                 <Trash2 size={18} />
                                             </button>
                                         </>
                                     ) : (
-                                        <span className="flex items-center gap-1 text-[10px] text-indigo-400 font-medium px-2 py-1 bg-indigo-500/10 rounded-lg">
+                                        <span className="flex items-center gap-1 text-[10px] text-[var(--accent)] font-medium px-2 py-1 bg-[var(--accent-soft)] rounded-lg">
                                             <Info size={10} /> C'est vous
                                         </span>
                                     )}
@@ -194,10 +194,10 @@ const TeamPage = () => {
                                     <select
                                         value={user.role}
                                         onChange={(e) => handleUpdateUser(user.id, { role: e.target.value })}
-                                        className="bg-transparent text-xs text-white/60 hover:text-white border-none focus:ring-0 cursor-pointer text-right outline-none"
+                                        className="bg-transparent text-xs text-[var(--ink-muted)] hover:text-[var(--ink)] border-none focus:ring-0 cursor-pointer text-right outline-none"
                                     >
-                                        <option value="USER" className="bg-slate-900">Utilisateur</option>
-                                        <option value="ADMIN" className="bg-slate-900">Administrateur</option>
+                                        <option value="USER" className="bg-[var(--paper)]">Utilisateur</option>
+                                        <option value="ADMIN" className="bg-[var(--paper)]">Administrateur</option>
                                     </select>
                                 )}
                             </div>
@@ -222,23 +222,23 @@ const TeamPage = () => {
                 variant="danger"
             />
 
-            <div className="mt-12 p-6 rounded-2xl border border-white/5 bg-white/5 backdrop-blur-md">
-                <h4 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-indigo-400" />
+            <div className="mt-12 p-6 rounded-2xl border border-[var(--line)] bg-white/70 backdrop-blur-md">
+                <h4 className="text-sm font-semibold text-[var(--ink)] mb-4 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-[var(--accent)]" />
                     Guide des rôles
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div className="space-y-1">
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-tighter">Utilisateur (USER)</p>
-                        <p className="text-xs text-slate-500">Peut consulter les arguments validés et proposer ses propres arguments (soumis à validation).</p>
+                        <p className="text-xs font-bold text-[var(--ink-muted)] uppercase tracking-tighter">Utilisateur (USER)</p>
+                        <p className="text-xs text-[var(--ink-muted)]">Peut consulter les arguments validés et proposer ses propres arguments (soumis à validation).</p>
                     </div>
                     <div className="space-y-1">
-                        <p className="text-xs font-bold text-amber-400 uppercase tracking-tighter">Administrateur (ADMIN)</p>
-                        <p className="text-xs text-slate-500">Peut valider, refuser, modifier ou supprimer tous les arguments. Ses propres ajouts sont auto-validés.</p>
+                        <p className="text-xs font-bold text-amber-600 uppercase tracking-tighter">Administrateur (ADMIN)</p>
+                        <p className="text-xs text-[var(--ink-muted)]">Peut valider, refuser, modifier ou supprimer tous les arguments. Ses propres ajouts sont auto-validés.</p>
                     </div>
                     <div className="space-y-1">
-                        <p className="text-xs font-bold text-indigo-400 uppercase tracking-tighter">Super Admin</p>
-                        <p className="text-xs text-slate-500">Possède tous les droits d'admin, plus la gestion de l'équipe (invitations, rôles, désactivation).</p>
+                        <p className="text-xs font-bold text-[var(--accent)] uppercase tracking-tighter">Super Admin</p>
+                        <p className="text-xs text-[var(--ink-muted)]">Possède tous les droits d'admin, plus la gestion de l'équipe (invitations, rôles, désactivation).</p>
                     </div>
                 </div>
             </div>

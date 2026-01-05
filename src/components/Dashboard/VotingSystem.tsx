@@ -28,7 +28,7 @@ const VotingSystem = ({
                     disabled={disabled}
                     aria-label={`Voter ${star} étoiles sur 5`}
                     className={cn(
-                        "transition-all duration-200 transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/60 focus-visible:ring-offset-0 rounded-sm",
+                        "transition-all duration-200 transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-soft)] focus-visible:ring-offset-0 rounded-sm",
                         !disabled && "hover:scale-125",
                         disabled ? "cursor-default" : "cursor-pointer"
                     )}
@@ -41,13 +41,13 @@ const VotingSystem = ({
                         className={cn(
                             "transition-colors duration-200",
                             (hover || userVote || initialRating) >= star
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-white/20 fill-transparent"
+                                ? "fill-[var(--accent)] text-[var(--accent)]"
+                                : "text-[var(--ink-muted)] opacity-40 fill-transparent"
                         )}
                     />
                 </button>
             ))}
-            <span className="ml-2 text-sm text-white/60">
+            <span className="ml-2 text-sm text-[var(--ink-muted)]">
                 ({initialRating.toFixed(1)})
             </span>
         </div>

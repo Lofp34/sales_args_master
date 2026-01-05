@@ -43,10 +43,10 @@ const ArgumentCard = ({
             className="h-full"
         >
             <GlassCard className="flex flex-col h-full group relative overflow-hidden">
-                <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl" />
-                <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-emerald-400/10 blur-3xl" />
+                <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-[var(--accent-soft)] blur-3xl" />
+                <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-[rgba(31,111,92,0.12)] blur-3xl" />
                 <div className="flex justify-between items-start mb-4 relative z-10">
-                    <h3 className="text-xl font-semibold text-white leading-tight">
+                    <h3 className="text-xl font-semibold text-[var(--ink)] leading-tight font-display">
                         {argument.title}
                     </h3>
                     {isAdmin && (
@@ -56,14 +56,14 @@ const ArgumentCard = ({
                                     <button
                                         onClick={() => onStatusChange?.(argument.id, "APPROVED")}
                                         title="Valider"
-                                        className="p-1.5 rounded-full bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                                        className="p-1.5 rounded-full bg-[rgba(31,111,92,0.15)] text-[var(--accent-2)] hover:bg-[rgba(31,111,92,0.25)] transition-colors"
                                     >
                                         <Check size={16} />
                                     </button>
                                     <button
                                         onClick={() => onStatusChange?.(argument.id, "REJECTED")}
                                         title="Refuser"
-                                        className="p-1.5 rounded-full bg-red-500/15 text-red-300 hover:bg-red-500/25 transition-colors"
+                                        className="p-1.5 rounded-full bg-red-500/15 text-red-500 hover:bg-red-500/25 transition-colors"
                                     >
                                         <CloseIcon size={16} />
                                     </button>
@@ -71,13 +71,13 @@ const ArgumentCard = ({
                             )}
                             <button
                                 onClick={() => onEdit?.(argument.id)}
-                                className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+                                className="p-1.5 rounded-full hover:bg-white/70 text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors"
                             >
                                 <Edit2 size={16} />
                             </button>
                             <button
                                 onClick={() => onDelete?.(argument.id)}
-                                className="p-1.5 rounded-full hover:bg-white/10 text-red-300/70 hover:text-red-300 transition-colors"
+                                className="p-1.5 rounded-full hover:bg-white/70 text-red-500/70 hover:text-red-500 transition-colors"
                             >
                                 <Trash2 size={16} />
                             </button>
@@ -87,17 +87,17 @@ const ArgumentCard = ({
 
                 <div className="flex flex-wrap gap-2 mb-4 relative z-10">
                     {argument.status === "PENDING" && (
-                        <span className="flex items-center gap-1 text-[10px] uppercase font-semibold tracking-[0.2em] px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/30">
+                        <span className="flex items-center gap-1 text-[10px] uppercase font-semibold tracking-[0.2em] px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-700 border border-amber-400/30">
                             <Clock size={10} /> En attente
                         </span>
                     )}
                     {argument.status === "APPROVED" && (
-                        <span className="flex items-center gap-1 text-[10px] uppercase font-semibold tracking-[0.2em] px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
+                        <span className="flex items-center gap-1 text-[10px] uppercase font-semibold tracking-[0.2em] px-2.5 py-1 rounded-full bg-[rgba(31,111,92,0.15)] text-[var(--accent-2)] border border-[rgba(31,111,92,0.35)]">
                             <Check size={10} /> Validé
                         </span>
                     )}
                     {argument.status === "REJECTED" && (
-                        <span className="flex items-center gap-1 text-[10px] uppercase font-semibold tracking-[0.2em] px-2.5 py-1 rounded-full bg-red-500/15 text-red-300 border border-red-400/30">
+                        <span className="flex items-center gap-1 text-[10px] uppercase font-semibold tracking-[0.2em] px-2.5 py-1 rounded-full bg-red-500/15 text-red-500 border border-red-400/30">
                             <AlertCircle size={10} /> Refusé
                         </span>
                     )}
@@ -105,28 +105,28 @@ const ArgumentCard = ({
 
                 <div className="flex-1 space-y-4 relative z-10">
                     <section>
-                        <p className="text-[11px] uppercase tracking-[0.3em] text-white/40 font-semibold mb-2">
+                        <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--ink-muted)] font-semibold mb-2">
                             Impact
                         </p>
-                        <p className="text-white/70 italic text-sm leading-relaxed">
+                        <p className="text-[var(--ink)] italic text-sm leading-relaxed opacity-80">
                             {argument.impact}
                         </p>
                     </section>
 
-                    <section className="bg-white/5 rounded-xl p-4 border border-white/10 relative overflow-hidden">
-                        <p className="text-[11px] uppercase tracking-[0.3em] text-white/40 font-semibold mb-2">
+                    <section className="bg-white/70 rounded-xl p-4 border border-[var(--line)] relative overflow-hidden">
+                        <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--ink-muted)] font-semibold mb-2">
                             Maïeutique
                         </p>
                         <div className="absolute top-0 right-0 p-2 opacity-10">
                             <Quote size={40} />
                         </div>
-                        <p className="text-primary font-medium text-base relative z-10 leading-relaxed">
+                        <p className="text-[var(--accent-2)] font-medium text-base relative z-10 leading-relaxed">
                             {argument.maieutique}
                         </p>
                     </section>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-white/10 relative z-10">
+                <div className="mt-6 pt-4 border-t border-[var(--line)] relative z-10">
                     <VotingSystem
                         initialRating={argument.averageRating}
                         userVote={argument.userVote}
@@ -134,7 +134,7 @@ const ArgumentCard = ({
                         disabled={!session || argument.status !== "APPROVED"}
                     />
                     {(!session || argument.status !== "APPROVED") && (
-                        <p className="text-[11px] text-white/40 mt-2">
+                        <p className="text-[11px] text-[var(--ink-muted)] mt-2">
                             Vote ouvert après validation.
                         </p>
                     )}

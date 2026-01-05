@@ -5,9 +5,10 @@ import React from "react";
 const InteractiveBackground = () => {
     return (
         <div className="bg-animated">
-            <div className="blob blob-1" />
-            <div className="blob blob-2" />
-            <div className="blob blob-3" />
+            <div className="bg-grid" />
+            <div className="bg-orb orb-a" />
+            <div className="bg-orb orb-b" />
+            <div className="bg-orb orb-c" />
         </div>
     );
 };

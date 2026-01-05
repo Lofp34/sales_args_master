@@ -58,23 +58,23 @@ export default function AddMemberModal({ isOpen, onClose, onSuccess }: AddMember
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+                        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
                     />
 
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-xl"
+                        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-6 shadow-2xl backdrop-blur-xl"
                     >
                         <div className="mb-6 flex items-center justify-between">
-                            <h2 className="text-xl font-semibold flex items-center gap-2">
-                                <UserPlus className="w-5 h-5 text-indigo-400" />
+                            <h2 className="text-xl font-semibold flex items-center gap-2 text-[var(--ink)] font-display">
+                                <UserPlus className="w-5 h-5 text-[var(--accent)]" />
                                 Ajouter un membre
                             </h2>
                             <button
                                 onClick={onClose}
-                                className="rounded-full p-1 hover:bg-white/10 transition-colors"
+                                className="rounded-full p-1 hover:bg-white transition-colors text-[var(--ink-muted)]"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -82,63 +82,63 @@ export default function AddMemberModal({ isOpen, onClose, onSuccess }: AddMember
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-1">
+                                <label className="block text-sm font-medium text-[var(--ink-muted)] mb-1">
                                     Nom complet
                                 </label>
                                 <div className="relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-muted)]" />
                                     <input
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-slate-100 placeholder-slate-500 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+                                        className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper-2)] py-2 pl-10 pr-4 text-[var(--ink)] placeholder:text-[var(--ink-muted)] placeholder:opacity-60 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)]"
                                         placeholder="Jean Dupont"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-1">
+                                <label className="block text-sm font-medium text-[var(--ink-muted)] mb-1">
                                     Email
                                 </label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-muted)]" />
                                     <input
                                         type="email"
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-slate-100 placeholder-slate-500 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+                                        className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper-2)] py-2 pl-10 pr-4 text-[var(--ink)] placeholder:text-[var(--ink-muted)] placeholder:opacity-60 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)]"
                                         placeholder="email@exemple.com"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-1">
+                                <label className="block text-sm font-medium text-[var(--ink-muted)] mb-1">
                                     Mot de passe provisoire
                                 </label>
                                 <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-muted)]" />
                                     <input
                                         type="password"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-slate-100 placeholder-slate-500 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+                                        className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper-2)] py-2 pl-10 pr-4 text-[var(--ink)] placeholder:text-[var(--ink-muted)] placeholder:opacity-60 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)]"
                                         placeholder="••••••••"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-1">
+                                <label className="block text-sm font-medium text-[var(--ink-muted)] mb-1">
                                     Rôle
                                 </label>
                                 <select
                                     value={role}
                                     onChange={(e) => setRole(e.target.value)}
-                                    className="w-full rounded-xl border border-white/10 bg-slate-800 py-2 px-4 text-slate-100 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+                                    className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper-2)] py-2 px-4 text-[var(--ink)] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)]"
                                 >
                                     <option value="USER">Utilisateur (USER)</option>
                                     <option value="ADMIN">Administrateur (ADMIN)</option>
@@ -148,7 +148,7 @@ export default function AddMemberModal({ isOpen, onClose, onSuccess }: AddMember
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full mt-4 flex items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 font-semibold text-white transition-all hover:bg-indigo-500 active:scale-[0.98] disabled:opacity-50"
+                                className="w-full mt-4 flex items-center justify-center gap-2 rounded-xl bg-[var(--ink)] py-3 font-semibold text-[var(--paper)] transition-all hover:bg-[var(--ink-muted)] active:scale-[0.98] disabled:opacity-50"
                             >
                                 {loading ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
