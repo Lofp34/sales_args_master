@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import InteractiveBackground from "@/components/ui/InteractiveBackground";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const displayFont = Bricolage_Grotesque({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const bodyFont = Instrument_Sans({
+  variable: "--font-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -29,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen text-slate-50 selection:bg-primary/30`}
+        className={`${displayFont.variable} ${bodyFont.variable} antialiased min-h-screen selection:bg-[var(--accent-soft)]`}
       >
         <Providers>
           <InteractiveBackground />
@@ -41,11 +43,12 @@ export default function RootLayout({
             position="bottom-right"
             toastOptions={{
               style: {
-                background: 'rgba(30, 41, 59, 0.7)',
-                color: '#fff',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
+                background: 'rgba(248, 243, 235, 0.92)',
+                color: '#1c1b17',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(28, 27, 23, 0.12)',
+                borderRadius: '14px',
+                boxShadow: '0 18px 40px -28px rgba(28, 27, 23, 0.45)',
               },
             }}
           />

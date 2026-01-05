@@ -1,70 +1,96 @@
 @import "tailwindcss";
 
 @theme {
-  --color-glass: rgba(255, 255, 255, 0.12);
-  --color-glass-border: rgba(255, 255, 255, 0.22);
-  --color-primary: #0ea5e9;
-  --color-secondary: #14b8a6;
+  --color-accent: #e05f2c;
+  --color-accent-2: #1f6f5c;
+  --color-ink: #1c1b17;
+  --color-paper: #f8f3eb;
+  --color-paper-2: #efe6d9;
+  --color-line: rgba(28, 27, 23, 0.12);
+  --color-accent-soft: rgba(224, 95, 44, 0.18);
 
-  --animate-blob: blob 7s infinite;
+  --animate-float: float 14s ease-in-out infinite;
+  --animate-drift: drift 18s ease-in-out infinite;
+  --animate-fadeup: fadeup 0.8s ease-out both;
 
-  @keyframes blob {
-    0% {
-      transform: translate(0px, 0px) scale(1);
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
     }
-
-    33% {
-      transform: translate(30px, -50px) scale(1.1);
+    50% {
+      transform: translateY(-12px);
     }
+  }
 
-    66% {
-      transform: translate(-20px, 20px) scale(0.9);
-    }
-
+  @keyframes drift {
+    0%,
     100% {
       transform: translate(0px, 0px) scale(1);
+    }
+    50% {
+      transform: translate(30px, -20px) scale(1.05);
+    }
+  }
+
+  @keyframes fadeup {
+    0% {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 }
 
 :root {
-  --background: #020617;
-  /* Deep Blue / Black */
-  --foreground: #f8fafc;
+  --ink: #1c1b17;
+  --ink-muted: #4a463f;
+  --paper: #f8f3eb;
+  --paper-2: #efe6d9;
+  --accent: #e05f2c;
+  --accent-2: #1f6f5c;
+  --accent-soft: rgba(224, 95, 44, 0.2);
+  --line: rgba(28, 27, 23, 0.12);
+  --shadow-1: 0 24px 60px -40px rgba(28, 27, 23, 0.5);
+  --shadow-2: 0 14px 30px -18px rgba(28, 27, 23, 0.35);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   overflow-x: hidden;
 }
 
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), "Times New Roman", serif;
+  letter-spacing: -0.02em;
+}
+
 .glass-morphism {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(248, 243, 235, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  box-shadow: var(--shadow-2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .glass-card {
   position: relative;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12),
-    rgba(255, 255, 255, 0.03)
-  );
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 1.1rem;
-  box-shadow: 0 16px 40px -24px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.4);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(247, 242, 233, 0.96));
+  border: 1px solid var(--line);
+  border-radius: 1.4rem;
+  box-shadow: var(--shadow-1);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
 .glass-card::before {
@@ -72,25 +98,17 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(
-      120% 120% at 0% 0%,
-      rgba(255, 255, 255, 0.18),
-      transparent 55%
-    ),
-    radial-gradient(
-      90% 120% at 90% 0%,
-      rgba(20, 184, 166, 0.12),
-      transparent 60%
-    );
-  opacity: 0.9;
+  background: radial-gradient(140% 140% at 100% 0%, rgba(224, 95, 44, 0.1), transparent 55%),
+    radial-gradient(120% 130% at 0% 100%, rgba(31, 111, 92, 0.12), transparent 60%);
+  opacity: 0.8;
   pointer-events: none;
   mix-blend-mode: screen;
 }
 
 .glass-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 28px 55px -32px rgb(0 0 0 / 0.7), 0 8px 22px -10px rgb(0 0 0 / 0.55);
-  border-color: rgba(255, 255, 255, 0.26);
+  transform: translateY(-5px);
+  box-shadow: 0 30px 70px -46px rgba(28, 27, 23, 0.6);
+  border-color: rgba(28, 27, 23, 0.22);
 }
 
 /* Animated Background */
@@ -101,36 +119,49 @@ body {
   right: 0;
   bottom: 0;
   z-index: -1;
-  background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(224, 95, 44, 0.25), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(31, 111, 92, 0.24), transparent 55%),
+    radial-gradient(700px 700px at 15% 95%, rgba(242, 201, 76, 0.18), transparent 55%),
+    linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
   overflow: hidden;
 }
 
-.blob {
+.bg-grid {
   position: absolute;
-  width: 500px;
-  height: 500px;
-  background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
-  filter: blur(80px);
-  opacity: 0.15;
+  inset: 0;
+  background-image: linear-gradient(rgba(28, 27, 23, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 27, 23, 0.04) 1px, transparent 1px);
+  background-size: 120px 120px;
+  opacity: 0.4;
+  mask-image: radial-gradient(circle at 50% 20%, black 0%, transparent 70%);
+}
+
+.bg-orb {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  filter: blur(60px);
+  opacity: 0.28;
   border-radius: 50%;
-  animation: var(--animate-blob);
+  animation: var(--animate-drift);
 }
 
-.blob-1 {
-  top: -100px;
-  left: -100px;
-  animation-delay: 0s;
+.orb-a {
+  top: -120px;
+  left: -80px;
+  background: radial-gradient(circle at 30% 30%, rgba(224, 95, 44, 0.7), transparent 60%);
 }
 
-.blob-2 {
-  bottom: -100px;
-  right: -100px;
+.orb-b {
+  bottom: -140px;
+  right: -80px;
+  background: radial-gradient(circle at 40% 40%, rgba(31, 111, 92, 0.6), transparent 60%);
   animation-delay: 2s;
 }
 
-.blob-3 {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.orb-c {
+  top: 45%;
+  left: 55%;
+  background: radial-gradient(circle at 50% 50%, rgba(242, 201, 76, 0.55), transparent 60%);
   animation-delay: 4s;
 }

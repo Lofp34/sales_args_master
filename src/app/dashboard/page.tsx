@@ -162,22 +162,22 @@ const DashboardPage = () => {
         });
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div>
-                    <h1 className="text-4xl font-bold text-white mb-2">Arguments de Vente</h1>
-                    <p className="text-white/60">Maîtrisez l'art de la maïeutique et l'impact psychologique.</p>
+                    <h1 className="text-4xl sm:text-5xl font-semibold text-[var(--ink)] mb-2 font-display">Arguments de vente</h1>
+                    <p className="text-[var(--ink-muted)] max-w-xl">Maîtrisez l'art de la maïeutique et l'impact psychologique pour transformer vos conversations.</p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-indigo-400 transition-colors" size={18} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--ink-muted)] group-focus-within:text-[var(--accent)] transition-colors" size={18} />
                         <input
                             type="text"
                             placeholder="Rechercher..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 w-full md:w-64 transition-all"
+                            className="bg-[var(--paper-2)] border border-[var(--line)] rounded-2xl pl-12 pr-4 py-3 text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] w-full md:w-64 transition-all"
                         />
                     </div>
                     <button
@@ -186,7 +186,7 @@ const DashboardPage = () => {
                             setFormData({ title: "", impact: "", maieutique: "" });
                             setIsModalOpen(true);
                         }}
-                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
+                        className="flex items-center gap-2 bg-[var(--accent)] hover:bg-[#cf4f1e] text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
                     >
                         <Plus size={20} />
                         Proposer
@@ -195,8 +195,8 @@ const DashboardPage = () => {
             </div>
 
             {isAdmin && (
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-8 bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
-                    <div className="flex gap-2 p-1 bg-black/20 rounded-xl">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-8 bg-[var(--paper-2)] p-4 rounded-2xl border border-[var(--line)] backdrop-blur-md">
+                    <div className="flex gap-2 p-1 bg-white/60 rounded-xl border border-[var(--line)]">
                         {[
                             { id: "APPROVED", label: "Validés", icon: Check },
                             { id: "PENDING", label: "En attente", icon: Clock },
@@ -205,9 +205,9 @@ const DashboardPage = () => {
                             <button
                                 key={tab.id}
                                 onClick={() => setStatusFilter(tab.id)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${statusFilter === tab.id
-                                    ? "bg-white/10 text-white shadow-sm"
-                                    : "text-white/40 hover:text-white/60"
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${statusFilter === tab.id
+                                    ? "bg-[var(--accent-soft)] text-[var(--ink)] shadow-sm"
+                                    : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
                                     }`}
                             >
                                 <tab.icon size={14} />
@@ -217,21 +217,21 @@ const DashboardPage = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 text-white/40 text-sm">
+                        <div className="flex items-center gap-2 text-[var(--ink-muted)] text-sm">
                             <SortAsc size={14} />
                             Trier par :
                         </div>
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setBy("date")}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "date" ? "bg-indigo-500 text-white" : "bg-white/5 text-white/40 hover:bg-white/10"
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "date" ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-white/60 text-[var(--ink-muted)] hover:bg-white"
                                     }`}
                             >
                                 Date
                             </button>
                             <button
                                 onClick={() => setBy("rating")}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${sortBy === "rating" ? "bg-indigo-500 text-white" : "bg-white/5 text-white/40 hover:bg-white/10"
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${sortBy === "rating" ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-white/60 text-[var(--ink-muted)] hover:bg-white"
                                     }`}
                             >
                                 <Star size={12} /> Popularité
@@ -244,21 +244,21 @@ const DashboardPage = () => {
             {!isAdmin && (
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 text-white/40 text-sm">
+                        <div className="flex items-center gap-2 text-[var(--ink-muted)] text-sm">
                             <SortAsc size={14} />
                             Trier par :
                         </div>
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setBy("date")}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "date" ? "bg-indigo-500 text-white" : "bg-white/5 text-white/40 hover:bg-white/10"
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${sortBy === "date" ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-white/60 text-[var(--ink-muted)] hover:bg-white"
                                     }`}
                             >
                                 Date
                             </button>
                             <button
                                 onClick={() => setBy("rating")}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${sortBy === "rating" ? "bg-indigo-500 text-white" : "bg-white/5 text-white/40 hover:bg-white/10"
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${sortBy === "rating" ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-white/60 text-[var(--ink-muted)] hover:bg-white"
                                     }`}
                             >
                                 <Star size={12} /> Popularité
@@ -270,11 +270,11 @@ const DashboardPage = () => {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin text-indigo-500" size={48} />
+                    <Loader2 className="animate-spin text-[var(--accent)]" size={48} />
                 </div>
             ) : sortedAndFilteredArguments.length === 0 ? (
-                <div className="text-center py-32 bg-white/5 rounded-3xl border border-dashed border-white/10">
-                    <p className="text-white/40 italic">Aucun argument trouvé.</p>
+                <div className="text-center py-32 bg-white/70 rounded-3xl border border-dashed border-[var(--line)]">
+                    <p className="text-[var(--ink-muted)] italic">Aucun argument trouvé.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -294,48 +294,48 @@ const DashboardPage = () => {
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
                     <GlassCard className="w-full max-w-2xl relative z-10 p-8">
                         <div className="flex justify-between items-center mb-8">
-                            <h2 className="text-2xl font-bold text-white">
+                            <h2 className="text-2xl font-semibold text-[var(--ink)] font-display">
                                 {editingArgument ? "Modifier l'argument" : "Proposer un argument"}
                             </h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-white/40 hover:text-white transition-colors">
+                            <button onClick={() => setIsModalOpen(false)} className="text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors">
                                 <X size={24} />
                             </button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-semibold text-white/50 uppercase tracking-widest ml-1">Titre (Argument)</label>
+                                <label className="text-xs font-semibold text-[var(--ink-muted)] uppercase tracking-widest ml-1">Titre (Argument)</label>
                                 <input
                                     type="text"
                                     required
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all"
+                                    className="w-full bg-[var(--paper-2)] border border-[var(--line)] rounded-xl px-4 py-3 text-[var(--ink)] focus:ring-2 focus:ring-[var(--accent-soft)] outline-none transition-all"
                                     placeholder="ex: Mobilité & Accès Full Web"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-semibold text-white/50 uppercase tracking-widest ml-1">Impact (Psychologie)</label>
+                                <label className="text-xs font-semibold text-[var(--ink-muted)] uppercase tracking-widest ml-1">Impact (Psychologie)</label>
                                 <textarea
                                     required
                                     value={formData.impact}
                                     onChange={(e) => setFormData({ ...formData, impact: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all h-24 resize-none"
+                                    className="w-full bg-[var(--paper-2)] border border-[var(--line)] rounded-xl px-4 py-3 text-[var(--ink)] focus:ring-2 focus:ring-[var(--accent-soft)] outline-none transition-all h-24 resize-none"
                                     placeholder="La raison psychologique pour laquelle cela fonctionne..."
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-semibold text-white/50 uppercase tracking-widest ml-1">Question Maïeutique (Action)</label>
+                                <label className="text-xs font-semibold text-[var(--ink-muted)] uppercase tracking-widest ml-1">Question Maïeutique (Action)</label>
                                 <textarea
                                     required
                                     value={formData.maieutique}
                                     onChange={(e) => setFormData({ ...formData, maieutique: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-indigo-400 font-medium focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all h-24 resize-none placeholder:text-indigo-400/30"
+                                    className="w-full bg-[var(--paper-2)] border border-[var(--line)] rounded-xl px-4 py-3 text-[var(--accent-2)] font-medium focus:ring-2 focus:ring-[var(--accent-soft)] outline-none transition-all h-24 resize-none placeholder:text-[var(--accent-2)] placeholder:opacity-50"
                                     placeholder="La question ouverte que le commercial doit poser..."
                                 />
                             </div>
@@ -344,18 +344,18 @@ const DashboardPage = () => {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="flex-1 py-4 rounded-xl bg-white/5 text-white font-bold hover:bg-white/10 transition-all"
+                                    className="flex-1 py-4 rounded-xl bg-white/70 text-[var(--ink)] font-bold hover:bg-white transition-all"
                                 >
                                     Annuler
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 py-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20 active:scale-95"
+                                    className="flex-1 py-4 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-bold hover:bg-[var(--ink-muted)] transition-all shadow-xl active:scale-95"
                                 >
                                     {editingArgument ? "Enregistrer" : "Créer l'argument"}
                                 </button>
                             </div>
-                            <p className="text-[10px] text-center text-white/30 italic">
+                            <p className="text-[10px] text-center text-[var(--ink-muted)] italic">
                                 * Les nouveaux arguments sont soumis à validation par un administrateur avant d'être visibles par tous.
                             </p>
                         </form>
