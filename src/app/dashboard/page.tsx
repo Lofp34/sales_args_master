@@ -28,6 +28,12 @@ const DashboardPage = () => {
     const [sortBy, setBy] = useState<"date" | "rating">("rating");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingArgument, setEditingArgument] = useState<Argument | null>(null);
+    const [isChatMode, setIsChatMode] = useState(true);
+    const [chatMessages, setChatMessages] = useState<
+        { role: "user" | "assistant"; content: string }[]
+    >([]);
+    const [chatInput, setChatInput] = useState("");
+    const [chatLoading, setChatLoading] = useState(false);
 
     const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
 
@@ -112,9 +118,47 @@ const DashboardPage = () => {
             setIsModalOpen(false);
             setEditingArgument(null);
             setFormData({ title: "", impact: "", maieutique: "" });
+            setChatMessages([]);
+            setChatInput("");
             fetchArguments();
         } catch (err: any) {
             toast.error(err.message);
+        }
+    };
+
+    const handleChatSend = async () => {
+        if (!chatInput.trim()) return;
+        const nextMessages = [...chatMessages, { role: "user", content: chatInput.trim() }];
+        setChatMessages(nextMessages);
+        setChatInput("");
+        setChatLoading(true);
+        try {
+            const res = await fetch("/api/arguments/assist", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messages: nextMessages,
+                    currentDraft: formData,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Assistant error");
+
+            setChatMessages((prev) => [
+                ...prev,
+                { role: "assistant", content: data.message || "D'accord, continuons." },
+            ]);
+            if (data.draft?.title || data.draft?.impact || data.draft?.maieutique) {
+                setFormData((prev) => ({
+                    title: data.draft.title ?? prev.title,
+                    impact: data.draft.impact ?? prev.impact,
+                    maieutique: data.draft.maieutique ?? prev.maieutique,
+                }));
+            }
+        } catch (err: any) {
+            toast.error(err.message);
+        } finally {
+            setChatLoading(false);
         }
     };
 
@@ -127,6 +171,9 @@ const DashboardPage = () => {
                 impact: arg.impact,
                 maieutique: arg.maieutique,
             });
+            setChatMessages([]);
+            setChatInput("");
+            setIsChatMode(false);
             setIsModalOpen(true);
         }
     };
@@ -184,6 +231,9 @@ const DashboardPage = () => {
                         onClick={() => {
                             setEditingArgument(null);
                             setFormData({ title: "", impact: "", maieutique: "" });
+                            setChatMessages([]);
+                            setChatInput("");
+                            setIsChatMode(true);
                             setIsModalOpen(true);
                         }}
                         className="flex items-center gap-2 bg-[var(--accent)] hover:bg-[#cf4f1e] text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
@@ -304,6 +354,63 @@ const DashboardPage = () => {
                                 <X size={24} />
                             </button>
                         </div>
+
+                        <div className="flex items-center justify-between mb-6 gap-4">
+                            <div className="text-sm text-white/50">
+                                {isChatMode ? "Assistant IA actif" : "Edition manuelle"}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsChatMode((prev) => !prev)}
+                                className="px-4 py-2 rounded-xl bg-white/10 text-white text-xs font-semibold uppercase tracking-widest hover:bg-white/20 transition-all"
+                            >
+                                {isChatMode ? "Passer en édition" : "Activer l'assistant IA"}
+                            </button>
+                        </div>
+
+                        {isChatMode && (
+                            <div className="mb-6 space-y-4">
+                                <div className="h-64 overflow-y-auto rounded-2xl border border-white/10 bg-black/30 p-4 space-y-4">
+                                    {chatMessages.length === 0 ? (
+                                        <p className="text-sm text-white/40">
+                                            Décrivez votre contexte commercial : cible, douleur client, bénéfice clé.
+                                        </p>
+                                    ) : (
+                                        chatMessages.map((msg, index) => (
+                                            <div
+                                                key={`${msg.role}-${index}`}
+                                                className={`rounded-2xl px-4 py-3 text-sm ${msg.role === "assistant"
+                                                    ? "bg-indigo-500/20 text-indigo-100"
+                                                    : "bg-white/10 text-white"
+                                                    }`}
+                                            >
+                                                {msg.content}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                                <div className="flex gap-3">
+                                    <input
+                                        type="text"
+                                        value={chatInput}
+                                        onChange={(e) => setChatInput(e.target.value)}
+                                        placeholder="Ex: Nos clients veulent réduire leurs coûts d'exploitation..."
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleChatSend}
+                                        disabled={chatLoading}
+                                        className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {chatLoading ? "..." : "Envoyer"}
+                                    </button>
+                                </div>
+                                <div className="text-xs text-white/40">
+                                    L'assistant prépare un brouillon automatique dans les champs ci-dessous.
+                                </div>
+                            </div>
+                        )}
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
