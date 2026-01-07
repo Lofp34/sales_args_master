@@ -2,22 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import ArgumentCard from "@/components/Dashboard/ArgumentCard";
 import { Plus, Loader2, Search, X, Filter, SortAsc, Star, Clock, Check } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import toast from "react-hot-toast";
-
-interface Argument {
-    id: string;
-    title: string;
-    impact: string;
-    maieutique: string;
-    status: "PENDING" | "APPROVED" | "REJECTED";
-    averageRating: number;
-    userVote?: number;
-    userId: string;
-    userName?: string;
-}
+import ArgumentsCarousel from "@/components/arguments/ArgumentsCarousel";
+import { Argument } from "@/types/argument";
 
 const DashboardPage = () => {
     const { data: session } = useSession();
@@ -277,18 +266,13 @@ const DashboardPage = () => {
                     <p className="text-[var(--ink-muted)] italic">Aucun argument trouvé.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {sortedAndFilteredArguments.map((arg) => (
-                        <ArgumentCard
-                            key={arg.id}
-                            argument={arg}
-                            onVote={handleVote}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                            onStatusChange={handleStatusChange}
-                        />
-                    ))}
-                </div>
+                <ArgumentsCarousel
+                    argumentsList={sortedAndFilteredArguments}
+                    onVote={handleVote}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onStatusChange={handleStatusChange}
+                />
             )}
 
             {/* Modal */}

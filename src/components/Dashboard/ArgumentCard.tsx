@@ -6,18 +6,10 @@ import VotingSystem from "./VotingSystem";
 import { Edit2, Trash2, Quote, Check, X as CloseIcon, Clock, AlertCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { Argument } from "@/types/argument";
 
 interface ArgumentCardProps {
-    argument: {
-        id: string;
-        title: string;
-        impact: string;
-        maieutique: string;
-        status: "PENDING" | "APPROVED" | "REJECTED";
-        averageRating: number;
-        userVote?: number;
-        userId: string;
-    };
+    argument: Argument;
     onVote: (id: string, value: number) => void;
     onEdit?: (id: string) => void;
     onDelete?: (id: string) => void;
